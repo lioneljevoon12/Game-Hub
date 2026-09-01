@@ -1,0 +1,448 @@
+/* ============================================
+   Game Hub — custom styles (on top of Tailwind)
+   Theme: night-time arcade marquee
+   ============================================ */
+
+:root {
+  --arcade-bg: #171022;
+  --arcade-bg-alt: #221830;
+  --arcade-card: #251b35;
+  --arcade-gold: #ffb84d;
+  --arcade-teal: #5eead4;
+  --arcade-pink: #ff6f9c;
+  --arcade-violet: #a78bfa;
+  --arcade-text: #f4eeff;
+  --arcade-muted: #a699c2;
+}
+
+@font-face {
+  font-display: swap;
+}
+
+body {
+  background-color: var(--arcade-bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(255, 184, 77, 0.12), transparent),
+    radial-gradient(ellipse 60% 40% at 90% 10%, rgba(94, 234, 212, 0.08), transparent);
+}
+
+/* CRT scanline overlay — subtle, fixed over whole page */
+.scanlines {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.025) 0px,
+    rgba(255, 255, 255, 0.025) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: overlay;
+  opacity: 0.5;
+}
+
+/* Marquee light bulbs */
+.marquee-lights {
+  display: flex;
+  justify-content: space-between;
+}
+
+.bulb {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--arcade-gold);
+  box-shadow: 0 0 6px 1px rgba(255, 184, 77, 0.8);
+  animation: bulb-blink 1.6s ease-in-out infinite;
+}
+
+.bulb:nth-child(3n + 1) { animation-delay: 0s; }
+.bulb:nth-child(3n + 2) { animation-delay: 0.25s; background: var(--arcade-teal); box-shadow: 0 0 6px 1px rgba(94, 234, 212, 0.8); }
+.bulb:nth-child(3n + 3) { animation-delay: 0.5s; background: var(--arcade-pink); box-shadow: 0 0 6px 1px rgba(255, 111, 156, 0.8); }
+
+@keyframes bulb-blink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.85); }
+}
+
+/* Cabinet card */
+.cabinet {
+  background: linear-gradient(180deg, var(--arcade-card), var(--arcade-bg-alt));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.cabinet:hover,
+.cabinet:focus-within {
+  transform: translateY(-4px);
+  border-color: rgba(255, 184, 77, 0.4);
+  box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 184, 77, 0.15);
+}
+
+/* Cabinet "screen" — glows on hover like it's powering on */
+.cabinet-screen {
+  background: radial-gradient(circle at 50% 30%, #1c1428, #0e0a15 75%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.cabinet:hover .cabinet-screen,
+.cabinet:focus-within .cabinet-screen {
+  box-shadow: inset 0 0 24px rgba(94, 234, 212, 0.25), 0 0 20px rgba(94, 234, 212, 0.15);
+  border-color: rgba(94, 234, 212, 0.35);
+}
+
+.cabinet-screen .glyph {
+  transition: transform 0.35s ease, filter 0.35s ease;
+  filter: grayscale(0.15);
+}
+
+.cabinet:hover .cabinet-screen .glyph,
+.cabinet:focus-within .cabinet-screen .glyph {
+  transform: scale(1.08);
+  filter: grayscale(0) drop-shadow(0 0 10px rgba(94, 234, 212, 0.5));
+}
+
+/* Insert coin blink */
+.blink-slow {
+  animation: soft-blink 1.8s steps(1) infinite;
+}
+
+@keyframes soft-blink {
+  0%, 60% { opacity: 1; }
+  80% { opacity: 0.25; }
+  100% { opacity: 1; }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .bulb,
+  .blink-slow {
+    animation: none !important;
+  }
+  .cabinet,
+  .cabinet-screen,
+  .cabinet-screen .glyph {
+    transition: none !important;
+  }
+  .hand-pump,
+  .reveal-pop {
+    animation: none !important;
+  }
+}
+
+/* Visible keyboard focus, arcade-styled */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--arcade-teal);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ============================================
+   Shared "battle" animations — dipakai RPS,
+   dan bisa dipakai game lain yang punya momen
+   "adu / reveal" (mis. Simon Says nanti).
+   ============================================ */
+
+/* Tangan "mompa" 3x sebelum reveal, kayak ritual suit beneran */
+@keyframes hand-pump {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-14px) scale(1.08); }
+}
+
+.hand-pump {
+  animation: hand-pump 0.28s ease-in-out 3;
+  display: inline-block;
+}
+
+/* Reveal pilihan akhir — pop + sedikit puntir biar berasa "muncul" */
+@keyframes reveal-pop {
+  0% { transform: scale(0.35) rotate(-10deg); opacity: 0; }
+  60% { transform: scale(1.18) rotate(5deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.reveal-pop {
+  animation: reveal-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: inline-block;
+}
+
+/* Highlight layar kabinet sesuai hasil ronde */
+.result-glow-win {
+  box-shadow: inset 0 0 26px rgba(94, 234, 212, 0.35), 0 0 22px rgba(94, 234, 212, 0.25) !important;
+  border-color: rgba(94, 234, 212, 0.55) !important;
+}
+
+.result-glow-lose {
+  box-shadow: inset 0 0 26px rgba(255, 111, 156, 0.3), 0 0 22px rgba(255, 111, 156, 0.2) !important;
+  border-color: rgba(255, 111, 156, 0.5) !important;
+}
+
+.result-glow-draw {
+  box-shadow: inset 0 0 26px rgba(255, 184, 77, 0.3), 0 0 22px rgba(255, 184, 77, 0.2) !important;
+  border-color: rgba(255, 184, 77, 0.5) !important;
+}
+
+/* ============================================
+   Memory Match — kartu flip 3D
+   ============================================ */
+
+.memory-card {
+  perspective: 1000px;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.memory-card:disabled {
+  cursor: default;
+}
+
+.memory-card-inner {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.45s cubic-bezier(0.4, 0.2, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.memory-card.is-flipped .memory-card-inner,
+.memory-card.is-matched .memory-card-inner {
+  transform: rotateY(180deg);
+}
+
+.memory-card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+}
+
+.memory-card-back {
+  background: radial-gradient(circle at 50% 30%, #1c1428, #0e0a15 75%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--arcade-muted);
+}
+
+.memory-card-front {
+  transform: rotateY(180deg);
+  background: linear-gradient(180deg, var(--arcade-card), var(--arcade-bg-alt));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.memory-card.is-matched .memory-card-front {
+  border-color: rgba(94, 234, 212, 0.55);
+  box-shadow: 0 0 16px rgba(94, 234, 212, 0.3);
+}
+
+/* Goyang pas dua kartu gak cocok */
+@keyframes mismatch-shake {
+  0%, 100% { transform: translateX(0) rotateY(180deg); }
+  20% { transform: translateX(-6px) rotateY(180deg); }
+  40% { transform: translateX(6px) rotateY(180deg); }
+  60% { transform: translateX(-4px) rotateY(180deg); }
+  80% { transform: translateX(4px) rotateY(180deg); }
+}
+
+.memory-card.mismatch-shake .memory-card-inner {
+  animation: mismatch-shake 0.4s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .memory-card-inner {
+    transition: none !important;
+  }
+  .memory-card.mismatch-shake .memory-card-inner {
+    animation: none !important;
+  }
+}
+
+/* ============================================
+   Reaction Test — layar armed/ready states
+   ============================================ */
+
+.reaction-state-armed {
+  background: radial-gradient(circle at 50% 30%, #3a1220, #1c0912 75%) !important;
+  border-color: rgba(255, 111, 156, 0.4) !important;
+  box-shadow: inset 0 0 30px rgba(255, 111, 156, 0.15) !important;
+}
+
+.reaction-state-ready {
+  background: radial-gradient(circle at 50% 30%, #123b34, #081d19 75%) !important;
+  border-color: rgba(94, 234, 212, 0.6) !important;
+  box-shadow: inset 0 0 34px rgba(94, 234, 212, 0.3), 0 0 26px rgba(94, 234, 212, 0.25) !important;
+}
+
+@keyframes flash-pulse {
+  0% { filter: brightness(1); }
+  40% { filter: brightness(1.7); }
+  100% { filter: brightness(1); }
+}
+
+.flash-pulse {
+  animation: flash-pulse 0.4s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flash-pulse {
+    animation: none !important;
+  }
+}
+
+/* ============================================
+   Generic horizontal shake — dipakai kapan pun
+   butuh feedback "salah" tanpa efek flip/rotate.
+   ============================================ */
+
+@keyframes shake-x {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+.shake-x {
+  animation: shake-x 0.4s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shake-x {
+    animation: none !important;
+  }
+}
+
+/* ============================================
+   Simon Says — pad silang (bukan grid kotak biasa)
+   ============================================ */
+
+.simon-pad {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+  cursor: pointer;
+}
+
+.simon-pad:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.simon-pad[data-color="teal"] { background: rgba(94, 234, 212, 0.12); color: var(--arcade-teal); }
+.simon-pad[data-color="gold"] { background: rgba(255, 184, 77, 0.12); color: var(--arcade-gold); }
+.simon-pad[data-color="pink"] { background: rgba(255, 111, 156, 0.12); color: var(--arcade-pink); }
+.simon-pad[data-color="violet"] { background: rgba(167, 139, 250, 0.12); color: var(--arcade-violet); }
+
+.simon-pad[data-color="teal"].lit {
+  background: rgba(94, 234, 212, 0.55);
+  box-shadow: 0 0 26px rgba(94, 234, 212, 0.6);
+  transform: scale(0.94);
+}
+.simon-pad[data-color="gold"].lit {
+  background: rgba(255, 184, 77, 0.55);
+  box-shadow: 0 0 26px rgba(255, 184, 77, 0.6);
+  transform: scale(0.94);
+}
+.simon-pad[data-color="pink"].lit {
+  background: rgba(255, 111, 156, 0.55);
+  box-shadow: 0 0 26px rgba(255, 111, 156, 0.6);
+  transform: scale(0.94);
+}
+.simon-pad[data-color="violet"].lit {
+  background: rgba(167, 139, 250, 0.55);
+  box-shadow: 0 0 26px rgba(167, 139, 250, 0.6);
+  transform: scale(0.94);
+}
+
+.simon-center {
+  background: radial-gradient(circle at 50% 35%, #1c1428, #0e0a15 75%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .simon-pad {
+    transition: none !important;
+  }
+}
+
+/* ============================================
+   Tic Tac Toe — sel papan, garis menang, serpihan hancur
+   ============================================ */
+
+.ttt-cell {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  overflow: visible;
+}
+
+.ttt-cell:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 184, 77, 0.3);
+}
+
+.ttt-cell:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.ttt-cell:disabled {
+  cursor: default;
+}
+
+.ttt-mark {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.ttt-cell.is-shattering .ttt-mark {
+  opacity: 0;
+  transform: scale(0.4);
+}
+
+/* Serpihan yang terbang pas simbol yang kalah "hancur" */
+@keyframes shatter-fly {
+  to {
+    transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(0.2);
+    opacity: 0;
+  }
+}
+
+.shatter-piece {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 2px;
+  animation: shatter-fly 0.65s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+  pointer-events: none;
+}
+
+/* Garis kemenangan (SVG), transisinya di-drive lewat JS pakai stroke-dashoffset */
+#win-line {
+  fill: none;
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ttt-cell,
+  .ttt-mark {
+    transition: none !important;
+  }
+  .shatter-piece {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+  #win-line {
+    transition: none !important;
+  }
+}

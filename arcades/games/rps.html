@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batu Gunting Kertas — Game Hub</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          arcade: {
+            bg: '#171022',
+            alt: '#221830',
+            card: '#251b35',
+            gold: '#ffb84d',
+            teal: '#5eead4',
+            pink: '#ff6f9c',
+            text: '#f4eeff',
+            muted: '#a699c2',
+          }
+        },
+        fontFamily: {
+          pixel: ['"Press Start 2P"', 'cursive'],
+          body: ['"Space Grotesk"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        }
+      }
+    }
+  }
+</script>
+
+<link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body class="bg-arcade-bg text-arcade-text font-body min-h-screen antialiased">
+
+  <div class="scanlines"></div>
+
+  <main class="relative z-10 max-w-3xl mx-auto px-6 py-10 sm:py-14">
+
+    <div class="flex items-center justify-between mb-10">
+      <a href="../index.html"
+         class="inline-flex items-center gap-2 font-mono text-xs text-arcade-muted hover:text-arcade-gold transition-colors">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+        KEMBALI KE MENU
+      </a>
+      <div class="flex items-center gap-1.5">
+        <span class="font-mono text-xs text-arcade-teal" data-score="rps">HI: --</span>
+      </div>
+    </div>
+
+    <header class="text-center mb-10">
+      <p class="font-mono text-xs text-arcade-muted mb-2">CABINET 01</p>
+      <h1 class="font-pixel text-lg sm:text-2xl text-arcade-gold drop-shadow-[0_0_16px_rgba(255,184,77,0.3)]">
+        BATU GUNTING KERTAS
+      </h1>
+    </header>
+
+    <section class="grid grid-cols-[1fr_auto_1fr] items-center gap-3 sm:gap-6 mb-6">
+      <div id="player-screen" class="cabinet rounded-2xl p-4 sm:p-6 text-center">
+        <p class="font-mono text-[10px] sm:text-xs text-arcade-muted mb-2 sm:mb-3">KAMU</p>
+        <div class="cabinet-screen rounded-xl aspect-square flex items-center justify-center">
+          <span id="player-hand" class="text-5xl sm:text-7xl">✊</span>
+        </div>
+      </div>
+
+      <div class="font-pixel text-arcade-muted text-xs sm:text-sm">VS</div>
+
+      <div id="cpu-screen" class="cabinet rounded-2xl p-4 sm:p-6 text-center">
+        <p class="font-mono text-[10px] sm:text-xs text-arcade-muted mb-2 sm:mb-3">CPU</p>
+        <div class="cabinet-screen rounded-xl aspect-square flex items-center justify-center">
+          <span id="cpu-hand" class="text-5xl sm:text-7xl">✊</span>
+        </div>
+      </div>
+    </section>
+
+    <p id="result-text" class="font-pixel text-center text-xs sm:text-sm text-arcade-muted mb-8 min-h-[2.5em] flex items-center justify-center px-2">
+      Pilih senjatamu buat mulai.
+    </p>
+
+    <section aria-label="Pilihan" class="grid grid-cols-3 gap-3 sm:gap-4 mb-10">
+      <button type="button" data-choice="rock"
+              class="cabinet rounded-2xl py-5 sm:py-6 flex flex-col items-center gap-2 hover:border-arcade-teal/50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+        <span class="text-3xl sm:text-4xl" aria-hidden="true">✊</span>
+        <span class="font-mono text-[10px] sm:text-xs text-arcade-muted">BATU</span>
+      </button>
+      <button type="button" data-choice="scissors"
+              class="cabinet rounded-2xl py-5 sm:py-6 flex flex-col items-center gap-2 hover:border-arcade-teal/50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+        <span class="text-3xl sm:text-4xl" aria-hidden="true">✌️</span>
+        <span class="font-mono text-[10px] sm:text-xs text-arcade-muted">GUNTING</span>
+      </button>
+      <button type="button" data-choice="paper"
+              class="cabinet rounded-2xl py-5 sm:py-6 flex flex-col items-center gap-2 hover:border-arcade-teal/50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+        <span class="text-3xl sm:text-4xl" aria-hidden="true">✋</span>
+        <span class="font-mono text-[10px] sm:text-xs text-arcade-muted">KERTAS</span>
+      </button>
+    </section>
+
+    <section aria-label="Skor sesi ini" class="cabinet rounded-2xl p-5 sm:p-6">
+      <div class="grid grid-cols-4 gap-2 text-center mb-4">
+        <div>
+          <p class="font-mono text-lg sm:text-xl text-arcade-teal" id="win-count">0</p>
+          <p class="font-mono text-[10px] text-arcade-muted mt-1">MENANG</p>
+        </div>
+        <div>
+          <p class="font-mono text-lg sm:text-xl text-arcade-gold" id="draw-count">0</p>
+          <p class="font-mono text-[10px] text-arcade-muted mt-1">SERI</p>
+        </div>
+        <div>
+          <p class="font-mono text-lg sm:text-xl text-arcade-pink" id="lose-count">0</p>
+          <p class="font-mono text-[10px] text-arcade-muted mt-1">KALAH</p>
+        </div>
+        <div>
+          <p class="font-mono text-lg sm:text-xl text-arcade-text" id="streak-count">0</p>
+          <p class="font-mono text-[10px] text-arcade-muted mt-1">STREAK</p>
+        </div>
+      </div>
+      <button type="button" id="reset-session"
+              class="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-arcade-alt border border-white/10 px-4 py-2.5 font-mono text-xs text-arcade-muted hover:text-arcade-pink hover:border-arcade-pink/40 transition-colors">
+        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+        MAIN ULANG
+      </button>
+    </section>
+
+    <p class="text-center font-mono text-[10px] text-arcade-muted mt-6">
+      HI menyimpan streak kemenangan beruntun terbaikmu.
+    </p>
+
+  </main>
+
+  <script src="../js/shared.js"></script>
+  <script src="../js/rps.js"></script>
+</body>
+</html>

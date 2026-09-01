@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simon Says — Game Hub</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          arcade: {
+            bg: '#171022',
+            alt: '#221830',
+            card: '#251b35',
+            gold: '#ffb84d',
+            teal: '#5eead4',
+            pink: '#ff6f9c',
+            violet: '#a78bfa',
+            text: '#f4eeff',
+            muted: '#a699c2',
+          }
+        },
+        fontFamily: {
+          pixel: ['"Press Start 2P"', 'cursive'],
+          body: ['"Space Grotesk"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        }
+      }
+    }
+  }
+</script>
+
+<link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body class="bg-arcade-bg text-arcade-text font-body min-h-screen antialiased">
+
+  <div class="scanlines"></div>
+
+  <main class="relative z-10 max-w-md mx-auto px-6 py-10 sm:py-14">
+
+    <div class="flex items-center justify-between mb-8">
+      <a href="../index.html"
+         class="inline-flex items-center gap-2 font-mono text-xs text-arcade-muted hover:text-arcade-gold transition-colors">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+        KEMBALI
+      </a>
+      <div class="flex items-center gap-3">
+        <button type="button" id="sound-toggle" aria-label="Nyala/matiin suara" aria-pressed="true"
+                class="text-arcade-muted hover:text-arcade-gold transition-colors">
+          <i data-lucide="volume-2" class="w-4 h-4"></i>
+        </button>
+        <span class="font-mono text-xs text-arcade-teal" data-score="simon">HI: --</span>
+      </div>
+    </div>
+
+    <header class="text-center mb-6">
+      <p class="font-mono text-xs text-arcade-muted mb-2">CABINET 05</p>
+      <h1 class="font-pixel text-lg sm:text-2xl text-arcade-gold drop-shadow-[0_0_16px_rgba(255,184,77,0.3)]">
+        SIMON SAYS
+      </h1>
+      <p class="font-mono text-[11px] sm:text-xs text-arcade-muted mt-3 max-w-xs mx-auto">
+        Merhatiin pola yang nyala, terus ulangin dengan urutan yang sama.
+      </p>
+    </header>
+
+    <section aria-label="Statistik" class="grid grid-cols-2 gap-3 mb-6">
+      <div class="cabinet rounded-xl p-3 text-center">
+        <p class="font-mono text-lg sm:text-xl text-arcade-text" id="stage-count">--</p>
+        <p class="font-mono text-[10px] text-arcade-muted mt-1">STAGE</p>
+      </div>
+      <div class="cabinet rounded-xl p-3 text-center">
+        <p class="font-mono text-lg sm:text-xl text-arcade-teal" id="best-stage">--</p>
+        <p class="font-mono text-[10px] text-arcade-muted mt-1">TERBAIK SESI</p>
+      </div>
+    </section>
+
+    <div class="cabinet rounded-2xl p-4 sm:p-5 mb-4">
+      <div id="pad-grid"
+           class="aspect-square"
+           style="display:grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; grid-template-areas: '. top .' 'left center right' '. bottom .'; gap: 0.5rem;">
+
+        <button type="button" id="pad-top" data-pad="top" data-color="teal" disabled
+                class="simon-pad rounded-2xl flex items-center justify-center" style="grid-area: top;"
+                aria-label="Pad atas, nada 1">
+          <i data-lucide="star" class="w-7 h-7 sm:w-8 sm:h-8"></i>
+        </button>
+
+        <button type="button" id="pad-left" data-pad="left" data-color="violet" disabled
+                class="simon-pad rounded-2xl flex items-center justify-center" style="grid-area: left;"
+                aria-label="Pad kiri, nada 4">
+          <i data-lucide="circle" class="w-7 h-7 sm:w-8 sm:h-8"></i>
+        </button>
+
+        <div style="grid-area: center;" class="flex items-center justify-center">
+          <div id="stage-display" class="simon-center w-full h-full rounded-full flex flex-col items-center justify-center">
+            <span id="stage-icon" class="text-xl sm:text-2xl" aria-hidden="true">🎮</span>
+            <span id="stage-text" class="font-pixel text-[9px] sm:text-[10px] text-arcade-muted mt-1 text-center px-2" aria-live="polite">
+              TEKAN MULAI
+            </span>
+          </div>
+        </div>
+
+        <button type="button" id="pad-right" data-pad="right" data-color="gold" disabled
+                class="simon-pad rounded-2xl flex items-center justify-center" style="grid-area: right;"
+                aria-label="Pad kanan, nada 2">
+          <i data-lucide="hexagon" class="w-7 h-7 sm:w-8 sm:h-8"></i>
+        </button>
+
+        <button type="button" id="pad-bottom" data-pad="bottom" data-color="pink" disabled
+                class="simon-pad rounded-2xl flex items-center justify-center" style="grid-area: bottom;"
+                aria-label="Pad bawah, nada 3">
+          <i data-lucide="triangle" class="w-7 h-7 sm:w-8 sm:h-8"></i>
+        </button>
+
+      </div>
+    </div>
+
+    <div class="flex flex-wrap justify-center gap-2 mb-6">
+      <span class="inline-flex items-center gap-1 rounded-md bg-arcade-alt border border-white/10 px-2 py-1 font-mono text-[10px] text-arcade-teal">
+        <i data-lucide="star" class="w-3 h-3"></i> ATAS
+      </span>
+      <span class="inline-flex items-center gap-1 rounded-md bg-arcade-alt border border-white/10 px-2 py-1 font-mono text-[10px] text-arcade-gold">
+        <i data-lucide="hexagon" class="w-3 h-3"></i> KANAN
+      </span>
+      <span class="inline-flex items-center gap-1 rounded-md bg-arcade-alt border border-white/10 px-2 py-1 font-mono text-[10px] text-arcade-pink">
+        <i data-lucide="triangle" class="w-3 h-3"></i> BAWAH
+      </span>
+      <span class="inline-flex items-center gap-1 rounded-md bg-arcade-alt border border-white/10 px-2 py-1 font-mono text-[10px] text-arcade-violet">
+        <i data-lucide="circle" class="w-3 h-3"></i> KIRI
+      </span>
+    </div>
+
+    <button type="button" id="start-btn"
+            class="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-arcade-teal/90 hover:bg-arcade-teal text-arcade-bg font-mono text-xs font-semibold px-4 py-3 transition-colors">
+      <i data-lucide="play" class="w-3.5 h-3.5"></i>
+      MULAI
+    </button>
+
+    <p class="text-center font-mono text-[10px] text-arcade-muted mt-6">
+      HI menyimpan stage tertinggi yang berhasil dicapai. Makin jauh, makin cepet polanya.
+    </p>
+
+  </main>
+
+  <script src="../js/shared.js"></script>
+  <script src="../js/simon.js"></script>
+</body>
+</html>

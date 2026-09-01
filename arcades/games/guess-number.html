@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tebak Angka — Game Hub</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          arcade: {
+            bg: '#171022',
+            alt: '#221830',
+            card: '#251b35',
+            gold: '#ffb84d',
+            teal: '#5eead4',
+            pink: '#ff6f9c',
+            text: '#f4eeff',
+            muted: '#a699c2',
+          }
+        },
+        fontFamily: {
+          pixel: ['"Press Start 2P"', 'cursive'],
+          body: ['"Space Grotesk"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        }
+      }
+    }
+  }
+</script>
+
+<link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body class="bg-arcade-bg text-arcade-text font-body min-h-screen antialiased">
+
+  <div class="scanlines"></div>
+
+  <main class="relative z-10 max-w-2xl mx-auto px-6 py-10 sm:py-14">
+
+    <!-- ===== Nav ===== -->
+    <div class="flex items-center justify-between mb-10">
+      <a href="../index.html"
+         class="inline-flex items-center gap-2 font-mono text-xs text-arcade-muted hover:text-arcade-gold transition-colors">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+        KEMBALI KE MENU
+      </a>
+      <div class="flex items-center gap-1.5">
+        <span class="font-mono text-xs text-arcade-teal" data-score="guess">HI: --</span>
+      </div>
+    </div>
+
+    <!-- ===== Title ===== -->
+    <header class="text-center mb-8">
+      <p class="font-mono text-xs text-arcade-muted mb-2">CABINET 04</p>
+      <h1 class="font-pixel text-lg sm:text-2xl text-arcade-gold drop-shadow-[0_0_16px_rgba(255,184,77,0.3)]">
+        TEBAK ANGKA
+      </h1>
+      <p class="font-mono text-[11px] sm:text-xs text-arcade-muted mt-3 max-w-sm mx-auto">
+        Ada satu angka rahasia antara 1–100. Ikuti hint-nya sampai ketemu.
+      </p>
+    </header>
+    <section aria-label="Statistik" class="grid grid-cols-3 gap-3 mb-6">
+      <div class="cabinet rounded-xl p-3 text-center">
+        <p class="font-mono text-lg sm:text-xl text-arcade-text" id="attempts-count">0</p>
+        <p class="font-mono text-[10px] text-arcade-muted mt-1">PERCOBAAN</p>
+      </div>
+      <div class="cabinet rounded-xl p-3 text-center">
+        <p class="font-mono text-base sm:text-lg text-arcade-gold" id="range-text">1 – 100</p>
+        <p class="font-mono text-[10px] text-arcade-muted mt-1">RENTANG</p>
+      </div>
+      <div class="cabinet rounded-xl p-3 text-center">
+        <p class="font-mono text-lg sm:text-xl text-arcade-teal" id="best-attempts">--</p>
+        <p class="font-mono text-[10px] text-arcade-muted mt-1">TERBAIK SESI</p>
+      </div>
+    </section>
+    <div id="screen" class="cabinet-screen w-full rounded-2xl py-8 px-6 flex flex-col items-center justify-center gap-2 text-center mb-6 border border-white/10">
+      <span id="screen-icon" class="text-4xl sm:text-5xl" aria-hidden="true">🔢</span>
+      <span id="screen-text" class="font-pixel text-sm sm:text-base text-arcade-muted" aria-live="polite">
+        MASUKIN TEBAKANMU
+      </span>
+    </div>
+
+    <form id="guess-form" class="flex gap-3 mb-6">
+      <label for="guess-input" class="sr-only">Tebakan angka</label>
+      <input type="number" id="guess-input" min="1" max="100" inputmode="numeric" required
+             placeholder="1 – 100"
+             class="flex-1 rounded-lg bg-arcade-alt border border-white/10 px-4 py-3 font-mono text-sm text-arcade-text text-center focus:outline-none focus:border-arcade-teal/60">
+      <button type="submit"
+              class="inline-flex items-center gap-2 rounded-lg bg-arcade-teal/90 hover:bg-arcade-teal text-arcade-bg font-mono text-xs font-semibold px-5 transition-colors">
+        TEBAK
+      </button>
+    </form>
+
+    <section aria-label="Riwayat tebakan" class="mb-6">
+      <p class="font-mono text-[10px] text-arcade-muted mb-2">RIWAYAT</p>
+      <div id="history-list" class="flex flex-wrap gap-2 min-h-[2.25rem]">
+        <span class="font-mono text-[11px] text-arcade-muted/60">Belum ada tebakan.</span>
+      </div>
+    </section>
+
+    <button type="button" id="reset-session"
+            class="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-arcade-alt border border-white/10 px-4 py-2.5 font-mono text-xs text-arcade-muted hover:text-arcade-pink hover:border-arcade-pink/40 transition-colors">
+      <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+      ANGKA BARU
+    </button>
+
+    <p class="text-center font-mono text-[10px] text-arcade-muted mt-6">
+      HI menyimpan jumlah percobaan tersedikit buat nemuin angkanya.
+    </p>
+
+  </main>
+
+  <script src="../js/shared.js"></script>
+  <script src="../js/guess-number.js"></script>
+</body>
+</html>

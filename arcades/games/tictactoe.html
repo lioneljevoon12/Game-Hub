@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tic Tac Toe — Game Hub</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          arcade: {
+            bg: '#171022',
+            alt: '#221830',
+            card: '#251b35',
+            gold: '#ffb84d',
+            teal: '#5eead4',
+            pink: '#ff6f9c',
+            violet: '#a78bfa',
+            text: '#f4eeff',
+            muted: '#a699c2',
+          }
+        },
+        fontFamily: {
+          pixel: ['"Press Start 2P"', 'cursive'],
+          body: ['"Space Grotesk"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        }
+      }
+    }
+  }
+</script>
+
+<link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body class="bg-arcade-bg text-arcade-text font-body min-h-screen antialiased">
+
+  <div class="scanlines"></div>
+
+  <main class="relative z-10 max-w-md mx-auto px-6 py-10 sm:py-14">
+
+    <!-- ===== Nav ===== -->
+    <div class="flex items-center justify-between mb-8">
+      <a href="../index.html"
+         class="inline-flex items-center gap-2 font-mono text-xs text-arcade-muted hover:text-arcade-gold transition-colors">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+        KEMBALI
+      </a>
+      <span class="font-mono text-xs text-arcade-teal" data-score="tictactoe">HI: --</span>
+    </div>
+    <header class="text-center mb-6">
+      <p class="font-mono text-xs text-arcade-muted mb-2">CABINET 06</p>
+      <h1 class="font-pixel text-lg sm:text-2xl text-arcade-gold drop-shadow-[0_0_16px_rgba(255,184,77,0.3)]">
+        TIC TAC TOE
+      </h1>
+    </header>
+
+    <div class="flex w-full rounded-lg bg-arcade-alt border border-white/10 p-1 mb-5" role="group" aria-label="Mode permainan">
+      <button type="button" id="mode-bot" class="flex-1 rounded-md py-2 font-mono text-xs transition-colors" aria-pressed="true">
+        VS BOT
+      </button>
+      <button type="button" id="mode-friend" class="flex-1 rounded-md py-2 font-mono text-xs transition-colors" aria-pressed="false">
+        VS TEMAN
+      </button>
+    </div>
+    <p id="status-text" class="font-pixel text-center text-xs sm:text-sm text-arcade-muted mb-6 min-h-[2.5em] flex items-center justify-center px-2" aria-live="polite">
+      GILIRAN KAMU (X)
+    </p>
+    <section aria-label="Statistik sesi" class="grid grid-cols-4 gap-2 mb-6">
+      <div class="cabinet rounded-xl p-2 sm:p-3 text-center">
+        <p class="font-mono text-base sm:text-lg text-arcade-teal" id="stat1-value">0</p>
+        <p class="font-mono text-[9px] sm:text-[10px] text-arcade-muted mt-1" id="stat1-label">MENANG</p>
+      </div>
+      <div class="cabinet rounded-xl p-2 sm:p-3 text-center">
+        <p class="font-mono text-base sm:text-lg text-arcade-gold" id="stat2-value">0</p>
+        <p class="font-mono text-[9px] sm:text-[10px] text-arcade-muted mt-1" id="stat2-label">SERI</p>
+      </div>
+      <div class="cabinet rounded-xl p-2 sm:p-3 text-center">
+        <p class="font-mono text-base sm:text-lg text-arcade-pink" id="stat3-value">0</p>
+        <p class="font-mono text-[9px] sm:text-[10px] text-arcade-muted mt-1" id="stat3-label">KALAH</p>
+      </div>
+      <div class="cabinet rounded-xl p-2 sm:p-3 text-center">
+        <p class="font-mono text-base sm:text-lg text-arcade-text" id="stat4-value">0</p>
+        <p class="font-mono text-[9px] sm:text-[10px] text-arcade-muted mt-1" id="stat4-label">STREAK</p>
+      </div>
+    </section>
+
+    <div class="cabinet rounded-2xl p-3 sm:p-4 mb-5">
+      <div class="relative aspect-square">
+        <div id="board" class="grid grid-cols-3 gap-2 sm:gap-3 w-full h-full"></div>
+        <svg id="win-line-svg" viewBox="0 0 100 100" preserveAspectRatio="none"
+             class="absolute inset-0 w-full h-full pointer-events-none opacity-0" style="transition: opacity 0.15s ease;">
+          <line id="win-line" x1="0" y1="0" x2="0" y2="0"></line>
+        </svg>
+      </div>
+    </div>
+
+    <button type="button" id="new-round-btn"
+            class="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-arcade-teal/90 hover:bg-arcade-teal text-arcade-bg font-mono text-xs font-semibold px-4 py-3 transition-colors mb-3">
+      <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+      RONDE BARU
+    </button>
+
+    <button type="button" id="reset-stats-btn"
+            class="w-full text-center font-mono text-[10px] text-arcade-muted hover:text-arcade-pink transition-colors underline decoration-dotted underline-offset-2">
+      Reset skor sesi
+    </button>
+
+    <p class="text-center font-mono text-[10px] text-arcade-muted mt-6">
+      HI menyimpan streak kemenangan beruntun ngelawan bot. Bot main sekuat mungkin — susah dikalahin!
+    </p>
+
+  </main>
+
+  <script src="../js/shared.js"></script>
+  <script src="../js/tictactoe.js"></script>
+</body>
+</html>

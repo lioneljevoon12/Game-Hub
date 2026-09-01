@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Hub — Mini Arcade</title>
+
+<!-- Fonts: pixel display + clean body + mono for scores -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<!-- Tailwind via CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Lucide icons via CDN (only for UI chrome — pencil, close, arrow) -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          arcade: {
+            bg: '#171022',
+            alt: '#221830',
+            card: '#251b35',
+            gold: '#ffb84d',
+            teal: '#5eead4',
+            pink: '#ff6f9c',
+            text: '#f4eeff',
+            muted: '#a699c2',
+          }
+        },
+        fontFamily: {
+          pixel: ['"Press Start 2P"', 'cursive'],
+          body: ['"Space Grotesk"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        }
+      }
+    }
+  }
+</script>
+
+<link rel="stylesheet" href="css/style.css">
+
+<!-- Lucide icons via CDN -->
+<script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="bg-arcade-bg text-arcade-text font-body min-h-screen antialiased">
+
+  <div class="scanlines"></div>
+
+  <main class="relative z-10 max-w-6xl mx-auto px-6 py-14 sm:py-20">
+
+    <!-- ===== Marquee / Hero ===== -->
+    <header class="text-center mb-16">
+      <div class="marquee-lights max-w-xs sm:max-w-sm mx-auto mb-6" aria-hidden="true">
+        <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+        <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+        <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+      </div>
+
+      <h1 class="font-pixel text-2xl sm:text-4xl leading-relaxed tracking-tight text-arcade-gold drop-shadow-[0_0_18px_rgba(255,184,77,0.35)]">
+        GAME HUB
+      </h1>
+
+      <p class="mt-5 font-mono text-arcade-muted text-sm sm:text-base max-w-md mx-auto">
+        6 mesin. 0 akun. 0 loading bar sungguhan.
+        <br class="hidden sm:block">
+        Pilih kabinet, mainkan, ulangi.
+      </p>
+
+      <div class="marquee-lights max-w-xs sm:max-w-sm mx-auto mt-6" aria-hidden="true">
+        <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+        <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+        <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+      </div>
+    </header>
+
+    <!-- ===== Cabinet grid ===== -->
+    <section aria-label="Daftar game" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- Cabinet 01 — RPS -->
+      <article class="cabinet rounded-2xl p-5 flex flex-col">
+        <div class="flex items-center justify-between mb-4">
+          <span class="font-mono text-xs text-arcade-muted">CABINET 01</span>
+          <div class="flex items-center gap-1.5">
+            <span class="font-mono text-xs text-arcade-teal" data-score="rps">HI: --</span>
+            <button type="button" data-edit-score="rps" data-game-name="Batu Gunting Kertas"
+                    class="text-arcade-muted hover:text-arcade-gold text-xs leading-none transition-colors"
+                    aria-label="Atur skor Batu Gunting Kertas"><i data-lucide="pencil" class="w-3 h-3"></i></button>
+          </div>
+        </div>
+        <div class="cabinet-screen rounded-xl aspect-[4/3] flex items-center justify-center mb-4">
+          <span class="glyph text-5xl" aria-hidden="true">✊✋✌️</span>
+        </div>
+        <h2 class="font-body font-semibold text-lg mb-1">Batu Gunting Kertas</h2>
+        <p class="text-sm text-arcade-muted mb-5 flex-1">Lawan CPU, best of 3 ronde. Klasik tapi bikin nagih.</p>
+        <a href="games/rps.html"
+           class="group inline-flex items-center justify-between rounded-lg bg-arcade-alt border border-white/10 px-4 py-2.5 font-mono text-sm text-arcade-gold hover:border-arcade-gold/50 transition-colors">
+          PLAY
+          <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+        </a>
+      </article>
+
+      <!-- Cabinet 02 — Memory -->
+      <article class="cabinet rounded-2xl p-5 flex flex-col">
+        <div class="flex items-center justify-between mb-4">
+          <span class="font-mono text-xs text-arcade-muted">CABINET 02</span>
+          <div class="flex items-center gap-1.5">
+            <span class="font-mono text-xs text-arcade-teal" data-score="memory">HI: --</span>
+            <button type="button" data-edit-score="memory" data-game-name="Memory Match"
+                    class="text-arcade-muted hover:text-arcade-gold text-xs leading-none transition-colors"
+                    aria-label="Atur skor Memory Match"><i data-lucide="pencil" class="w-3 h-3"></i></button>
+          </div>
+        </div>
+        <div class="cabinet-screen rounded-xl aspect-[4/3] flex items-center justify-center mb-4">
+          <span class="glyph text-5xl" aria-hidden="true">🃏</span>
+        </div>
+        <h2 class="font-body font-semibold text-lg mb-1">Memory Match</h2>
+        <p class="text-sm text-arcade-muted mb-5 flex-1">Buka kartu, cocokkan pasangan, kalahkan waktumu sendiri.</p>
+        <a href="games/memory.html"
+           class="group inline-flex items-center justify-between rounded-lg bg-arcade-alt border border-white/10 px-4 py-2.5 font-mono text-sm text-arcade-gold hover:border-arcade-gold/50 transition-colors">
+          PLAY
+          <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+        </a>
+      </article>
+
+      <!-- Cabinet 03 — Reaction -->
+      <article class="cabinet rounded-2xl p-5 flex flex-col">
+        <div class="flex items-center justify-between mb-4">
+          <span class="font-mono text-xs text-arcade-muted">CABINET 03</span>
+          <div class="flex items-center gap-1.5">
+            <span class="font-mono text-xs text-arcade-teal" data-score="reaction">HI: --</span>
+            <button type="button" data-edit-score="reaction" data-game-name="Reaction Test"
+                    class="text-arcade-muted hover:text-arcade-gold text-xs leading-none transition-colors"
+                    aria-label="Atur skor Reaction Test"><i data-lucide="pencil" class="w-3 h-3"></i></button>
+          </div>
+        </div>
+        <div class="cabinet-screen rounded-xl aspect-[4/3] flex items-center justify-center mb-4">
+          <span class="glyph text-5xl" aria-hidden="true">⚡</span>
+        </div>
+        <h2 class="font-body font-semibold text-lg mb-1">Reaction Test</h2>
+        <p class="text-sm text-arcade-muted mb-5 flex-1">Klik secepat mungkin saat layar berubah warna. Ukur ms-mu.</p>
+        <a href="games/reaction.html"
+           class="group inline-flex items-center justify-between rounded-lg bg-arcade-alt border border-white/10 px-4 py-2.5 font-mono text-sm text-arcade-gold hover:border-arcade-gold/50 transition-colors">
+          PLAY
+          <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+        </a>
+      </article>
+
+      <!-- Cabinet 04 — Guess the Number -->
+      <article class="cabinet rounded-2xl p-5 flex flex-col">
+        <div class="flex items-center justify-between mb-4">
+          <span class="font-mono text-xs text-arcade-muted">CABINET 04</span>
+          <div class="flex items-center gap-1.5">
+            <span class="font-mono text-xs text-arcade-teal" data-score="guess">HI: --</span>
+            <button type="button" data-edit-score="guess" data-game-name="Tebak Angka"
+                    class="text-arcade-muted hover:text-arcade-gold text-xs leading-none transition-colors"
+                    aria-label="Atur skor Tebak Angka"><i data-lucide="pencil" class="w-3 h-3"></i></button>
+          </div>
+        </div>
+        <div class="cabinet-screen rounded-xl aspect-[4/3] flex items-center justify-center mb-4">
+          <span class="glyph text-5xl" aria-hidden="true">🔢</span>
+        </div>
+        <h2 class="font-body font-semibold text-lg mb-1">Tebak Angka</h2>
+        <p class="text-sm text-arcade-muted mb-5 flex-1">Angka 1–100 tersembunyi. Ikuti petunjuk, tebak dalam sesedikit mungkin percobaan.</p>
+        <a href="games/guess-number.html"
+           class="group inline-flex items-center justify-between rounded-lg bg-arcade-alt border border-white/10 px-4 py-2.5 font-mono text-sm text-arcade-gold hover:border-arcade-gold/50 transition-colors">
+          PLAY
+          <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+        </a>
+      </article>
+
+      <!-- Cabinet 05 — Simon Says -->
+      <article class="cabinet rounded-2xl p-5 flex flex-col">
+        <div class="flex items-center justify-between mb-4">
+          <span class="font-mono text-xs text-arcade-muted">CABINET 05</span>
+          <div class="flex items-center gap-1.5">
+            <span class="font-mono text-xs text-arcade-teal" data-score="simon">HI: --</span>
+            <button type="button" data-edit-score="simon" data-game-name="Simon Says"
+                    class="text-arcade-muted hover:text-arcade-gold text-xs leading-none transition-colors"
+                    aria-label="Atur skor Simon Says"><i data-lucide="pencil" class="w-3 h-3"></i></button>
+          </div>
+        </div>
+        <div class="cabinet-screen rounded-xl aspect-[4/3] flex items-center justify-center mb-4">
+          <span class="glyph text-5xl" aria-hidden="true">🎨</span>
+        </div>
+        <h2 class="font-body font-semibold text-lg mb-1">Simon Says</h2>
+        <p class="text-sm text-arcade-muted mb-5 flex-1">Hafalkan pola warna yang makin panjang tiap ronde.</p>
+        <a href="games/simon.html"
+           class="group inline-flex items-center justify-between rounded-lg bg-arcade-alt border border-white/10 px-4 py-2.5 font-mono text-sm text-arcade-gold hover:border-arcade-gold/50 transition-colors">
+          PLAY
+          <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+        </a>
+      </article>
+
+      <!-- Cabinet 06 — Tic Tac Toe -->
+      <article class="cabinet rounded-2xl p-5 flex flex-col">
+        <div class="flex items-center justify-between mb-4">
+          <span class="font-mono text-xs text-arcade-muted">CABINET 06</span>
+          <div class="flex items-center gap-1.5">
+            <span class="font-mono text-xs text-arcade-teal" data-score="tictactoe">HI: --</span>
+            <button type="button" data-edit-score="tictactoe" data-game-name="Tic Tac Toe"
+                    class="text-arcade-muted hover:text-arcade-gold text-xs leading-none transition-colors"
+                    aria-label="Atur skor Tic Tac Toe"><i data-lucide="pencil" class="w-3 h-3"></i></button>
+          </div>
+        </div>
+        <div class="cabinet-screen rounded-xl aspect-[4/3] flex items-center justify-center mb-4">
+          <span class="glyph text-5xl" aria-hidden="true">⭕</span>
+        </div>
+        <h2 class="font-body font-semibold text-lg mb-1">Tic Tac Toe</h2>
+        <p class="text-sm text-arcade-muted mb-5 flex-1">Lawan CPU atau teman satu layar. Tiga sejajar, menang.</p>
+        <a href="games/tictactoe.html"
+           class="group inline-flex items-center justify-between rounded-lg bg-arcade-alt border border-white/10 px-4 py-2.5 font-mono text-sm text-arcade-gold hover:border-arcade-gold/50 transition-colors">
+          PLAY
+          <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+        </a>
+      </article>
+
+    </section>
+
+    <!-- ===== Footer ===== -->
+    <footer class="mt-20 text-center">
+      <p class="font-pixel text-arcade-pink text-xs sm:text-sm blink-slow">
+        INSERT COIN TO CONTINUE
+      </p>
+      <p class="font-mono text-arcade-muted text-xs mt-4">
+        Dibangun pakai HTML + Tailwind (CDN) + vanilla JS. Tanpa akun, tanpa server, tanpa drama.
+      </p>
+    </footer>
+
+  </main>
+
+  <div id="score-modal-overlay"
+       class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
+    <div class="cabinet rounded-2xl p-6 w-full max-w-sm" role="dialog" aria-modal="true" aria-labelledby="score-modal-title">
+      <div class="flex items-center justify-between mb-5">
+        <h3 id="score-modal-title" class="font-mono text-sm text-arcade-gold">Set skor</h3>
+        <button type="button" id="score-modal-close" class="text-arcade-muted hover:text-arcade-pink transition-colors" aria-label="Tutup">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <form id="score-modal-form" class="space-y-4">
+        <div>
+          <label for="score-modal-input" class="block font-mono text-xs text-arcade-muted mb-1.5">Skor tertinggi</label>
+          <input type="number" id="score-modal-input" required
+                 class="w-full rounded-lg bg-arcade-bg border border-white/10 px-3 py-2 font-mono text-sm text-arcade-text focus:outline-none focus:border-arcade-teal/60"
+                 placeholder="cth: 120">
+        </div>
+        <div class="flex items-center justify-between gap-3 pt-1">
+          <button type="button" id="score-modal-reset" class="font-mono text-xs text-arcade-pink hover:underline">Reset ke --</button>
+          <button type="submit"
+                  class="rounded-lg bg-arcade-teal/90 hover:bg-arcade-teal text-arcade-bg font-mono text-xs font-semibold px-4 py-2 transition-colors">
+            Simpan
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/shared.js"></script>
+</body>
+</html>
