@@ -1,6 +1,10 @@
-
+/**
+ * tictactoe.js — Tic Tac Toe vs Bot (minimax) atau vs Teman (lokal 2 pemain).
+ * Butuh GameHub + refreshScoreBadge dari shared.js (di-load sebelum file ini).
+ */
 
 (function () {
+  // ===== Koordinat garis menang, dalam ruang viewBox 0-100 (persegi) =====
   const LINE_COORDS = {
     row0: { x1: 5, y1: 16.67, x2: 95, y2: 16.67 },
     row1: { x1: 5, y1: 50, x2: 95, y2: 50 },
@@ -25,11 +29,12 @@
 
   // ===== Kumpulan teks — random tiap kali dipakai =====
   const BOT_THINKING_MESSAGES = ['BOT MIKIR...', 'BOT LAGI ITUNG LANGKAH...', 'TUNGGU BOT JALAN...', 'BOT NGATUR STRATEGI...'];
+  const BOT_FIRST_MESSAGES = ['BOT DULUAN NIH...', 'KALI INI BOT DULUAN.', 'GILIRAN BOT DULU, SABAR YA...'];
   const DRAW_MESSAGES = ['SERI! PAPAN PENUH.', 'IMBANG, GAK ADA YANG MENANG.', 'SERI — MAIN LAGI YUK.'];
   const WIN_MESSAGES = {
     bot: {
-      X: ['MANTAP, KAMU MENANG!', 'X MENANG! BOT KALAH TELAK.', 'HEBAT, KAMU NGALAHIN BOT!'],
-      O: ['BOT MENANG. COBA LAGI!', 'YAH, KALAH SAMA BOT.', 'BOT LEBIH LICIN KALI INI.'],
+      player: ['MANTAP, KAMU MENANG!', 'KEREN, BOT KALAH TELAK!', 'HEBAT, KAMU NGALAHIN BOT!'],
+      bot: ['BOT MENANG. COBA LAGI!', 'YAH, KALAH SAMA BOT.', 'BOT LEBIH LICIN KALI INI.'],
     },
     friend: {
       X: ['X MENANG!', 'GARIS X! MENANG TELAK.', 'X BERHASIL BIKIN GARIS!'],
@@ -52,20 +57,27 @@
     ],
   };
 
+  // ===== DOM refs =====
   const boardEl = document.getElementById('board');
   const svgEl = document.getElementById('win-line-svg');
   const lineEl = document.getElementById('win-line');
   const statusEl = document.getElementById('status-text');
+  const symbolIndicatorEl = document.getElementById('symbol-indicator');
   const modeBotBtn = document.getElementById('mode-bot');
   const modeFriendBtn = document.getElementById('mode-friend');
   const newRoundBtn = document.getElementById('new-round-btn');
   const resetStatsBtn = document.getElementById('reset-stats-btn');
 
+  // ===== State =====
   let mode = 'bot'; // 'bot' | 'friend'
   let cells = Array(9).fill(null);
   let cellEls = [];
   let currentPlayer = 'X';
   let boardLocked = false;
+
+  // Simbol pemain vs bot di-random tiap ronde baru (mode bot) — gak selalu X.
+  let playerSymbol = 'X';
+  let botSymbol = 'O';
 
   let botStats = { wins: 0, draws: 0, losses: 0, streak: 0 };
   let friendStats = { winsX: 0, draws: 0, winsO: 0, rounds: 0 };
@@ -74,6 +86,7 @@
     return list[Math.floor(Math.random() * list.length)];
   }
 
+  // ===== Aturan main =====
   function checkWinnerPattern(boardState) {
     for (let p = 0; p < WIN_PATTERNS.length; p += 1) {
       const [a, b, c] = WIN_PATTERNS[p].cells;
@@ -88,16 +101,17 @@
     return boardState.every((v) => v !== null);
   }
 
+  // ===== Bot: minimax (main sempurna, unbeatable) — pakai botSymbol/playerSymbol dinamis =====
   function minimax(boardState, depth, isMaximizing) {
     const result = checkWinnerPattern(boardState);
-    if (result) return result.winner === 'O' ? 10 - depth : depth - 10;
+    if (result) return result.winner === botSymbol ? 10 - depth : depth - 10;
     if (isBoardFull(boardState)) return 0;
 
     if (isMaximizing) {
       let best = -Infinity;
       for (let i = 0; i < 9; i += 1) {
         if (boardState[i] === null) {
-          boardState[i] = 'O';
+          boardState[i] = botSymbol;
           best = Math.max(best, minimax(boardState, depth + 1, false));
           boardState[i] = null;
         }
@@ -108,7 +122,7 @@
     let best = Infinity;
     for (let i = 0; i < 9; i += 1) {
       if (boardState[i] === null) {
-        boardState[i] = 'X';
+        boardState[i] = playerSymbol;
         best = Math.min(best, minimax(boardState, depth + 1, true));
         boardState[i] = null;
       }
@@ -121,7 +135,7 @@
     let bestMoves = [];
     for (let i = 0; i < 9; i += 1) {
       if (boardState[i] === null) {
-        boardState[i] = 'O';
+        boardState[i] = botSymbol;
         const score = minimax(boardState, 1, false);
         boardState[i] = null;
         if (score > bestScore) {
@@ -135,10 +149,23 @@
     return bestMoves[Math.floor(Math.random() * bestMoves.length)];
   }
 
+  // ===== Render helpers =====
   function setStatus(text, colorClass) {
     statusEl.textContent = text;
     statusEl.className =
       `font-pixel text-center text-xs sm:text-sm mb-6 min-h-[2.5em] flex items-center justify-center px-2 ${colorClass || 'text-arcade-muted'}`;
+  }
+
+  function updateSymbolIndicator() {
+    if (mode === 'bot') {
+      const colorClass = playerSymbol === 'X' ? 'text-arcade-teal' : 'text-arcade-violet';
+      symbolIndicatorEl.textContent = `KAMU MAIN SEBAGAI ${playerSymbol}`;
+      symbolIndicatorEl.className = `font-mono text-[10px] text-center mb-3 ${colorClass}`;
+      symbolIndicatorEl.classList.remove('hidden');
+    } else {
+      symbolIndicatorEl.textContent = '';
+      symbolIndicatorEl.classList.add('hidden');
+    }
   }
 
   function renderMark(index, symbol) {
@@ -229,6 +256,7 @@
     }, 850);
   }
 
+  // ===== Stats =====
   function renderStats() {
     const config = STAT_CONFIG[mode];
     const data = mode === 'bot' ? botStats : friendStats;
@@ -243,7 +271,7 @@
 
   function updateStatsOnWin(winner) {
     if (mode === 'bot') {
-      if (winner === 'X') {
+      if (winner === playerSymbol) {
         botStats.wins += 1;
         botStats.streak += 1;
         if (GameHub.saveHighScoreIfBetter('tictactoe', botStats.streak, true)) {
@@ -273,6 +301,7 @@
     renderStats();
   }
 
+  // ===== Alur permainan =====
   function handleWin(result) {
     boardLocked = true;
     drawWinLine(result.line, result.winner);
@@ -286,7 +315,14 @@
     }, 350);
 
     updateStatsOnWin(result.winner);
-    setStatus(pickRandom(WIN_MESSAGES[mode][result.winner]), result.winner === 'X' ? 'text-arcade-teal' : 'text-arcade-violet');
+
+    const colorClass = result.winner === 'X' ? 'text-arcade-teal' : 'text-arcade-violet';
+    if (mode === 'bot') {
+      const outcomeKey = result.winner === playerSymbol ? 'player' : 'bot';
+      setStatus(pickRandom(WIN_MESSAGES.bot[outcomeKey]), colorClass);
+    } else {
+      setStatus(pickRandom(WIN_MESSAGES.friend[result.winner]), colorClass);
+    }
   }
 
   function handleDraw() {
@@ -308,10 +344,27 @@
     return false;
   }
 
+  function triggerBotMove(messagePool) {
+    boardLocked = true;
+    setStatus(pickRandom(messagePool || BOT_THINKING_MESSAGES), 'text-arcade-muted');
+
+    setTimeout(() => {
+      const idx = getBotMove(cells);
+      cells[idx] = botSymbol;
+      renderMark(idx, botSymbol);
+
+      if (afterMove()) return;
+
+      boardLocked = false;
+      currentPlayer = playerSymbol;
+      setStatus(`GILIRAN KAMU (${playerSymbol})`, 'text-arcade-muted');
+    }, 550 + Math.random() * 300);
+  }
+
   function handleCellClick(index) {
     if (boardLocked) return;
     if (cells[index] !== null) return;
-    if (mode === 'bot' && currentPlayer !== 'X') return;
+    if (mode === 'bot' && currentPlayer !== playerSymbol) return;
 
     cells[index] = currentPlayer;
     renderMark(index, currentPlayer);
@@ -320,23 +373,10 @@
 
     currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
 
-    if (mode === 'bot' && currentPlayer === 'O') {
-      boardLocked = true;
-      setStatus(pickRandom(BOT_THINKING_MESSAGES), 'text-arcade-muted');
-
-      setTimeout(() => {
-        const idx = getBotMove(cells);
-        cells[idx] = 'O';
-        renderMark(idx, 'O');
-
-        if (afterMove()) return;
-
-        boardLocked = false;
-        currentPlayer = 'X';
-        setStatus('GILIRAN KAMU (X)', 'text-arcade-muted');
-      }, 550 + Math.random() * 300);
+    if (mode === 'bot' && currentPlayer === botSymbol) {
+      triggerBotMove();
     } else {
-      setStatus(mode === 'bot' ? 'GILIRAN KAMU (X)' : `GILIRAN ${currentPlayer}`, 'text-arcade-muted');
+      setStatus(mode === 'bot' ? `GILIRAN KAMU (${playerSymbol})` : `GILIRAN ${currentPlayer}`, 'text-arcade-muted');
     }
   }
 
@@ -346,8 +386,23 @@
     cellEls.forEach((cell, i) => clearCellVisual(cell, i));
     resetWinLine();
     boardLocked = false;
-    currentPlayer = 'X';
-    setStatus(mode === 'bot' ? 'GILIRAN KAMU (X)' : 'GILIRAN X', 'text-arcade-muted');
+    currentPlayer = 'X'; // X selalu jalan duluan sesuai aturan baku
+
+    if (mode === 'bot') {
+      // Simbol pemain di-random tiap ronde — kadang X (jalan duluan), kadang O (bot duluan).
+      playerSymbol = Math.random() < 0.5 ? 'X' : 'O';
+      botSymbol = playerSymbol === 'X' ? 'O' : 'X';
+      updateSymbolIndicator();
+
+      if (currentPlayer === botSymbol) {
+        triggerBotMove(BOT_FIRST_MESSAGES);
+        return;
+      }
+      setStatus(`GILIRAN KAMU (${playerSymbol})`, 'text-arcade-muted');
+    } else {
+      updateSymbolIndicator();
+      setStatus(`GILIRAN ${currentPlayer}`, 'text-arcade-muted');
+    }
   }
 
   function updateModeButtons() {
