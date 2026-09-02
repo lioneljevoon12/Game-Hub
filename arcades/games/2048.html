@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2048 — Game Hub</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          arcade: {
+            bg: '#171022',
+            alt: '#221830',
+            card: '#251b35',
+            gold: '#ffb84d',
+            teal: '#5eead4',
+            pink: '#ff6f9c',
+            violet: '#a78bfa',
+            text: '#f4eeff',
+            muted: '#a699c2',
+          }
+        },
+        fontFamily: {
+          pixel: ['"Press Start 2P"', 'cursive'],
+          body: ['"Space Grotesk"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        }
+      }
+    }
+  }
+</script>
+
+<link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body class="bg-arcade-bg text-arcade-text font-body min-h-screen antialiased">
+
+  <div class="scanlines"></div>
+
+  <main class="relative z-10 max-w-md mx-auto px-6 py-10 sm:py-14">
+
+    <!-- ===== Nav ===== -->
+    <div class="flex items-center justify-between mb-8">
+      <a href="../index.html"
+         class="inline-flex items-center gap-2 font-mono text-xs text-arcade-muted hover:text-arcade-gold transition-colors">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+        KEMBALI
+      </a>
+      <span class="font-mono text-xs text-arcade-teal" data-score="2048">HI: --</span>
+    </div>
+
+    <!-- ===== Title ===== -->
+    <header class="text-center mb-6">
+      <p class="font-mono text-xs text-arcade-muted mb-2">CABINET 07</p>
+      <h1 class="font-pixel text-lg sm:text-2xl text-arcade-gold drop-shadow-[0_0_16px_rgba(255,184,77,0.3)]">
+        2048
+      </h1>
+      <p class="font-mono text-[11px] sm:text-xs text-arcade-muted mt-3 max-w-xs mx-auto">
+        Geser pake panah atau swipe. Gabungin angka yang sama biar makin gede.
+      </p>
+    </header>
+
+    <!-- ===== Stats ===== -->
+    <section aria-label="Statistik" class="grid grid-cols-3 gap-3 mb-6">
+      <div class="cabinet rounded-xl p-3 text-center">
+        <p class="font-mono text-lg sm:text-xl text-arcade-teal" id="score-value">0</p>
+        <p class="font-mono text-[10px] text-arcade-muted mt-1">SKOR</p>
+      </div>
+      <div class="cabinet rounded-xl p-3 text-center">
+        <p class="font-mono text-lg sm:text-xl text-arcade-text" id="moves-value">0</p>
+        <p class="font-mono text-[10px] text-arcade-muted mt-1">GERAKAN</p>
+      </div>
+      <div class="cabinet rounded-xl p-3 text-center">
+        <p class="font-mono text-lg sm:text-xl text-arcade-gold" id="best-tile-value">--</p>
+        <p class="font-mono text-[10px] text-arcade-muted mt-1">TILE TERBESAR</p>
+      </div>
+    </section>
+
+    <!-- ===== Board ===== -->
+    <div class="cabinet rounded-2xl p-3 sm:p-4 mb-5">
+      <div id="board-wrapper" class="relative aspect-square rounded-xl overflow-hidden touch-none">
+        <div id="board-bg" class="absolute inset-0"></div>
+        <div id="tiles-layer" class="absolute inset-0"></div>
+
+        <div id="win-overlay" class="board-overlay">
+          <span class="text-4xl" aria-hidden="true">🎉</span>
+          <p class="font-pixel text-sm text-arcade-gold">2048 TERCAPAI!</p>
+          <p class="font-mono text-[11px] text-arcade-muted px-2">Mau lanjut ngejar tile yang lebih gede lagi?</p>
+          <div class="flex gap-2 mt-2">
+            <button type="button" id="win-continue-btn"
+                    class="rounded-lg bg-arcade-teal/90 hover:bg-arcade-teal text-arcade-bg font-mono text-xs font-semibold px-4 py-2 transition-colors">
+              LANJUT MAIN
+            </button>
+            <button type="button" id="win-restart-btn"
+                    class="rounded-lg bg-arcade-alt border border-white/10 text-arcade-muted hover:text-arcade-text font-mono text-xs px-4 py-2 transition-colors">
+              RONDE BARU
+            </button>
+          </div>
+        </div>
+
+        <div id="gameover-overlay" class="board-overlay">
+          <p class="font-pixel text-sm text-arcade-pink">GAME OVER</p>
+          <p id="gameover-summary" class="font-mono text-[11px] text-arcade-muted px-4"></p>
+          <button type="button" id="gameover-restart-btn"
+                  class="rounded-lg bg-arcade-teal/90 hover:bg-arcade-teal text-arcade-bg font-mono text-xs font-semibold px-4 py-2 mt-1 transition-colors">
+            MAIN LAGI
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== New game ===== -->
+    <button type="button" id="new-game-btn"
+            class="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-arcade-alt border border-white/10 px-4 py-2.5 font-mono text-xs text-arcade-muted hover:text-arcade-pink hover:border-arcade-pink/40 transition-colors">
+      <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+      RONDE BARU
+    </button>
+
+    <p class="text-center font-mono text-[10px] text-arcade-muted mt-6">
+      HI menyimpan skor tertinggi. Abis nyampe 2048 boleh terus lanjut ngejar tile lebih gede.
+    </p>
+
+  </main>
+
+  <script src="../js/shared.js"></script>
+  <script src="../js/2048.js"></script>
+</body>
+</html>
