@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cake Tower — Game Hub</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          arcade: {
+            bg: '#171022',
+            alt: '#221830',
+            card: '#251b35',
+            gold: '#ffb84d',
+            teal: '#5eead4',
+            pink: '#ff6f9c',
+            violet: '#a78bfa',
+            text: '#f4eeff',
+            muted: '#a699c2',
+          }
+        },
+        fontFamily: {
+          pixel: ['"Press Start 2P"', 'cursive'],
+          body: ['"Space Grotesk"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        }
+      }
+    }
+  }
+</script>
+
+<link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body class="bg-arcade-bg text-arcade-text font-body min-h-screen antialiased">
+
+  <div class="scanlines"></div>
+
+  <main class="relative z-10 max-w-md mx-auto px-6 py-10 sm:py-14">
+
+    <!-- ===== Nav ===== -->
+    <div class="flex items-center justify-between mb-8">
+      <a href="../index.html"
+         class="inline-flex items-center gap-2 font-mono text-xs text-arcade-muted hover:text-arcade-gold transition-colors">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+        KEMBALI
+      </a>
+      <span class="font-mono text-xs text-arcade-teal" data-score="stack">HI: --</span>
+    </div>
+
+    <!-- ===== Title ===== -->
+    <header class="text-center mb-6">
+      <p class="font-mono text-xs text-arcade-muted mb-2">CABINET 08</p>
+      <h1 class="font-pixel text-lg sm:text-2xl text-arcade-gold drop-shadow-[0_0_16px_rgba(255,184,77,0.3)]">
+        CAKE TOWER
+      </h1>
+      <p class="font-mono text-[11px] sm:text-xs text-arcade-muted mt-3 max-w-xs mx-auto">
+        Ketuk pas lapisan ada di atas lapisan sebelumnya. Meleset dikit, kepotong. Kebablasan, ambruk.
+      </p>
+    </header>
+
+    <!-- ===== Stats ===== -->
+    <section aria-label="Statistik" class="grid grid-cols-2 gap-3 mb-6">
+      <div class="cabinet rounded-xl p-3 text-center">
+        <p class="font-mono text-lg sm:text-xl text-arcade-teal" id="score-value">0</p>
+        <p class="font-mono text-[10px] text-arcade-muted mt-1">SKOR</p>
+      </div>
+      <div class="cabinet rounded-xl p-3 text-center">
+        <p class="font-mono text-lg sm:text-xl text-arcade-gold" id="perfect-value">0</p>
+        <p class="font-mono text-[10px] text-arcade-muted mt-1">PERFECT</p>
+      </div>
+    </section>
+
+    <!-- ===== Board ===== -->
+    <div class="cabinet rounded-2xl p-3 sm:p-4 mb-4">
+      <div id="board-wrapper"
+           class="relative aspect-[3/4] rounded-xl overflow-hidden cursor-pointer select-none touch-manipulation">
+        <div id="stack-layer" class="absolute inset-0"></div>
+        <div id="falling-pieces-layer" class="absolute inset-0 pointer-events-none"></div>
+
+        <div id="gameover-overlay" class="board-overlay">
+          <p class="font-pixel text-sm text-arcade-pink">GAME OVER</p>
+          <p id="gameover-summary" class="font-mono text-[11px] text-arcade-muted px-4"></p>
+          <button type="button" id="gameover-restart-btn"
+                  class="rounded-lg bg-arcade-teal/90 hover:bg-arcade-teal text-arcade-bg font-mono text-xs font-semibold px-4 py-2 mt-1 transition-colors">
+            MAIN LAGI
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Drop button ===== -->
+    <button type="button" id="drop-btn"
+            class="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-arcade-teal/90 hover:bg-arcade-teal text-arcade-bg font-mono text-sm font-semibold px-4 py-3.5 transition-colors mb-3">
+      JATUHIN!
+    </button>
+
+    <button type="button" id="restart-link-btn"
+            class="w-full text-center font-mono text-[10px] text-arcade-muted hover:text-arcade-pink transition-colors underline decoration-dotted underline-offset-2">
+      Mulai ulang
+    </button>
+
+    <p class="text-center font-mono text-[10px] text-arcade-muted mt-6">
+      HI menyimpan skor tertinggi (jumlah lapisan berhasil ditumpuk). Spasi/Enter juga bisa buat jatuhin.
+    </p>
+
+  </main>
+
+  <script src="../js/shared.js"></script>
+  <script src="../js/stack.js"></script>
+</body>
+</html>

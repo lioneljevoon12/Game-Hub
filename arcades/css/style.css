@@ -534,3 +534,58 @@ button:focus-visible {
     transition: none !important;
   }
 }
+
+.cake-layer {
+  position: absolute;
+  border-radius: 0.35rem;
+  border: 1px solid transparent;
+  overflow: hidden;
+}
+
+.cake-frosting {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 22%;
+  border-radius: 0.35rem 0.35rem 0 0;
+  opacity: 0.9;
+}
+
+@keyframes cake-piece-fall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(180%) rotate(var(--fall-rot, 15deg)); opacity: 0; }
+}
+
+.cake-falling-piece {
+  animation: cake-piece-fall 0.55s cubic-bezier(0.4, 0, 0.7, 1) forwards;
+  pointer-events: none;
+  z-index: 5;
+}
+
+@keyframes cake-perfect-pop {
+  0% { transform: translate(-50%, 0) scale(0.6); opacity: 0; }
+  30% { transform: translate(-50%, -4px) scale(1.1); opacity: 1; }
+  100% { transform: translate(-50%, -26px) scale(1); opacity: 0; }
+}
+
+.cake-perfect-popup {
+  position: absolute;
+  left: 50%;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.55rem;
+  color: var(--arcade-gold);
+  text-shadow: 0 0 10px rgba(255, 184, 77, 0.7);
+  animation: cake-perfect-pop 0.7s ease-out forwards;
+  pointer-events: none;
+  z-index: 25;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cake-falling-piece,
+  .cake-perfect-popup {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+}
