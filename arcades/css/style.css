@@ -535,6 +535,10 @@ button:focus-visible {
   }
 }
 
+/* ============================================
+   Cake Tower — tumpuk lapisan, kamera ngikutin ke atas
+   ============================================ */
+
 .cake-layer {
   position: absolute;
   border-radius: 0.35rem;
@@ -587,5 +591,73 @@ button:focus-visible {
   .cake-perfect-popup {
     animation: none !important;
     opacity: 0 !important;
+  }
+}
+
+/* ============================================
+   Snake — badan nyambung mulus + kepala berwajah
+   ============================================ */
+
+.snake-segment {
+  position: absolute;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+}
+
+.snake-eye {
+  position: absolute;
+  width: 22%;
+  height: 22%;
+  background: rgba(23, 16, 34, 0.95);
+  border-radius: 9999px;
+  transform: translate(-50%, -50%);
+}
+
+.snake-pupil {
+  position: absolute;
+  inset: 25%;
+  background: var(--arcade-text);
+  border-radius: 9999px;
+}
+
+@keyframes tongue-flick {
+  0%, 100% { transform: scaleX(0.3); opacity: 0; }
+  50% { transform: scaleX(1); opacity: 1; }
+}
+
+.snake-tongue {
+  position: absolute;
+  background: var(--arcade-pink);
+  border-radius: 2px;
+  animation: tongue-flick 1.6s ease-in-out infinite;
+}
+
+.snake-tongue-right { left: 96%; top: 46%; width: 26%; height: 8%; transform-origin: left center; }
+.snake-tongue-left  { right: 96%; top: 46%; width: 26%; height: 8%; transform-origin: right center; }
+.snake-tongue-up    { bottom: 96%; left: 46%; width: 8%; height: 26%; transform-origin: center bottom; }
+.snake-tongue-down  { top: 96%; left: 46%; width: 8%; height: 26%; transform-origin: center top; }
+
+@keyframes food-pulse {
+  0%, 100% { transform: scale(0.85); }
+  50% { transform: scale(1.05); }
+}
+
+.snake-food {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.snake-food-emoji {
+  font-size: 68%;
+  animation: food-pulse 0.9s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px rgba(255, 184, 77, 0.5));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snake-tongue,
+  .snake-food-emoji {
+    animation: none !important;
   }
 }
