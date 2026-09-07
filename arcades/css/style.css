@@ -661,3 +661,33 @@ button:focus-visible {
     animation: none !important;
   }
 }
+
+/* ============================================
+   Breakout — bata, paddle, bola
+   ============================================ */
+
+.brick {
+  position: absolute;
+  border-radius: 0.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.paddle {
+  position: absolute;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--arcade-teal), var(--arcade-violet));
+  box-shadow: 0 0 12px rgba(94, 234, 212, 0.5);
+}
+
+.ball {
+  position: absolute;
+  border-radius: 9999px;
+  background: var(--arcade-gold);
+  box-shadow: 0 0 14px rgba(255, 184, 77, 0.8), 0 0 4px rgba(255, 255, 255, 0.9);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brick {
+    transition: none !important;
+  }
+}
