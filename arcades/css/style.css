@@ -691,3 +691,39 @@ button:focus-visible {
     transition: none !important;
   }
 }
+
+/* ============================================
+   Connect Four — lubang papan & keping jatuh
+   ============================================ */
+
+.connect4-hole {
+  position: absolute;
+  border-radius: 9999px;
+  background: var(--arcade-bg);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.55);
+}
+
+.connect4-piece {
+  position: absolute;
+  border-radius: 9999px;
+}
+
+@keyframes piece-settle {
+  0% { transform: scaleY(1); }
+  30% { transform: scaleY(0.8); }
+  60% { transform: scaleY(1.07); }
+  100% { transform: scaleY(1); }
+}
+
+.piece-settle {
+  animation: piece-settle 0.25s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .connect4-piece {
+    transition: none !important;
+  }
+  .piece-settle {
+    animation: none !important;
+  }
+}
