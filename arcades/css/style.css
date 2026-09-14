@@ -727,3 +727,143 @@ button:focus-visible {
     animation: none !important;
   }
 }
+
+/* ============================================
+   Whack-a-Mole — lubang & mol emoji
+   ============================================ */
+
+.mole-hole {
+  position: relative;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 50% 40%, #1c1428, #0e0a15 75%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  cursor: none;
+}
+
+.mole-emoji {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(1.6rem, 7vw, 2.4rem);
+  pointer-events: none;
+}
+
+@keyframes mole-pop-up {
+  0% { transform: translateY(65%) scale(0.7); opacity: 0; }
+  60% { transform: translateY(-8%) scale(1.08); opacity: 1; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.mole-pop {
+  animation: mole-pop-up 0.18s ease-out forwards;
+}
+
+@keyframes mole-retract-down {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(65%) scale(0.7); opacity: 0; }
+}
+
+.mole-retract {
+  animation: mole-retract-down 0.2s ease-in forwards;
+}
+
+@keyframes mole-hit-squash {
+  0% { transform: scale(1); opacity: 1; }
+  40% { transform: scale(1.3, 0.55); opacity: 1; }
+  100% { transform: scale(0.2); opacity: 0; }
+}
+
+.mole-hit {
+  animation: mole-hit-squash 0.2s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mole-pop,
+  .mole-retract,
+  .mole-hit {
+    animation: none !important;
+  }
+}
+
+/* ============================================
+   Whack-a-Mole — palu kursor & efek partikel
+   ============================================ */
+
+.hammer-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  font-size: 2.4rem;
+  line-height: 1;
+  pointer-events: none;
+  z-index: 100;
+  transform: translate(-30%, -55%) rotate(-35deg);
+  transform-origin: 75% 30%;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  will-change: transform;
+}
+
+.hammer-cursor.visible {
+  opacity: 1;
+}
+
+@keyframes hammer-swing {
+  0% { transform: translate(-30%, -55%) rotate(-35deg); }
+  35% { transform: translate(-30%, -55%) rotate(20deg); }
+  100% { transform: translate(-30%, -55%) rotate(-35deg); }
+}
+
+.hammer-cursor.swinging {
+  animation: hammer-swing 0.22s ease-out;
+}
+
+@keyframes impact-ring-burst {
+  0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0.85; }
+  100% { transform: translate(-50%, -50%) scale(1.9); opacity: 0; }
+}
+
+.impact-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 55%;
+  height: 55%;
+  border-radius: 9999px;
+  border: 3px solid;
+  animation: impact-ring-burst 0.4s ease-out forwards;
+  pointer-events: none;
+  z-index: 15;
+}
+
+@keyframes impact-particle-burst {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--px)), calc(-50% + var(--py))) scale(0.3); opacity: 0; }
+}
+
+.impact-particle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  animation: impact-particle-burst 0.45s ease-out forwards;
+  pointer-events: none;
+  z-index: 15;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hammer-cursor,
+  .hammer-cursor.swinging {
+    animation: none !important;
+  }
+  .impact-ring,
+  .impact-particle {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+}
