@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Game Hub — Mini Arcade</title>
+<title>InsertCoin — Mini Arcade</title>
 
 <!-- Fonts: pixel display + clean body + mono for scores -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -58,11 +58,11 @@
       </div>
 
       <h1 class="font-pixel text-2xl sm:text-4xl leading-relaxed tracking-tight text-arcade-gold drop-shadow-[0_0_18px_rgba(255,184,77,0.35)]">
-        GAME HUB
+        INSERTCOIN
       </h1>
 
       <p class="mt-5 font-mono text-arcade-muted text-sm sm:text-base max-w-md mx-auto">
-        12 mesin. 0 akun. 0 loading bar sungguhan.
+        14 mesin. 0 akun. 0 loading bar sungguhan.
         <br class="hidden sm:block">
         Pilih kabinet, mainkan, ulangi.
       </p>
@@ -347,6 +347,52 @@
         <h2 class="font-body font-semibold text-lg mb-1">Whack-a-Mole</h2>
         <p class="text-sm text-arcade-muted mb-5 flex-1">Muncul sebentar, hilang lagi. Klik secepat mungkin sebelum kabur.</p>
         <a href="games/whack-a-mole.html"
+           class="group inline-flex items-center justify-between rounded-lg bg-arcade-alt border border-white/10 px-4 py-2.5 font-mono text-sm text-arcade-gold hover:border-arcade-gold/50 transition-colors">
+          PLAY
+          <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+        </a>
+      </article>
+
+      <!-- Cabinet 13 — Space Invaders -->
+      <article class="cabinet rounded-2xl p-5 flex flex-col">
+        <div class="flex items-center justify-between mb-4">
+          <span class="font-mono text-xs text-arcade-muted">CABINET 13</span>
+          <div class="flex items-center gap-1.5">
+            <span class="font-mono text-xs text-arcade-teal" data-score="invaders">HI: --</span>
+            <button type="button" data-edit-score="invaders" data-game-name="Space Invaders"
+                    class="text-arcade-muted hover:text-arcade-gold text-xs leading-none transition-colors"
+                    aria-label="Atur skor Space Invaders"><i data-lucide="pencil" class="w-3 h-3"></i></button>
+          </div>
+        </div>
+        <div class="cabinet-screen rounded-xl aspect-[4/3] flex items-center justify-center mb-4">
+          <span class="glyph text-5xl" aria-hidden="true">👾</span>
+        </div>
+        <h2 class="font-body font-semibold text-lg mb-1">Space Invaders</h2>
+        <p class="text-sm text-arcade-muted mb-5 flex-1">Tembak armada alien sebelum mereka mendarat di buminya arkade!</p>
+        <a href="games/space-invaders.html"
+           class="group inline-flex items-center justify-between rounded-lg bg-arcade-alt border border-white/10 px-4 py-2.5 font-mono text-sm text-arcade-gold hover:border-arcade-gold/50 transition-colors">
+          PLAY
+          <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+        </a>
+      </article>
+
+      <!-- Cabinet 14 — Minesweeper -->
+      <article class="cabinet rounded-2xl p-5 flex flex-col">
+        <div class="flex items-center justify-between mb-4">
+          <span class="font-mono text-xs text-arcade-muted">CABINET 14</span>
+          <div class="flex items-center gap-1.5">
+            <span class="font-mono text-xs text-arcade-teal" data-score="minesweeper">HI: --</span>
+            <button type="button" data-edit-score="minesweeper" data-game-name="Minesweeper"
+                    class="text-arcade-muted hover:text-arcade-gold text-xs leading-none transition-colors"
+                    aria-label="Atur skor Minesweeper"><i data-lucide="pencil" class="w-3 h-3"></i></button>
+          </div>
+        </div>
+        <div class="cabinet-screen rounded-xl aspect-[4/3] flex items-center justify-center mb-4">
+          <span class="glyph text-5xl" aria-hidden="true">💣</span>
+        </div>
+        <h2 class="font-body font-semibold text-lg mb-1">Minesweeper</h2>
+        <p class="text-sm text-arcade-muted mb-5 flex-1">Buka petak, hindari ranjau acak, catat waktu tercepatmu!</p>
+        <a href="games/minesweeper.html"
            class="group inline-flex items-center justify-between rounded-lg bg-arcade-alt border border-white/10 px-4 py-2.5 font-mono text-sm text-arcade-gold hover:border-arcade-gold/50 transition-colors">
           PLAY
           <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>

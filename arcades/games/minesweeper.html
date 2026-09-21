@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minesweeper — InsertCoin</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          arcade: {
+            bg: '#171022',
+            alt: '#221830',
+            card: '#251b35',
+            gold: '#ffb84d',
+            teal: '#5eead4',
+            pink: '#ff6f9c',
+            violet: '#a78bfa',
+            text: '#f4eeff',
+            muted: '#a699c2',
+          }
+        },
+        fontFamily: {
+          pixel: ['"Press Start 2P"', 'cursive'],
+          body: ['"Space Grotesk"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        }
+      }
+    }
+  }
+</script>
+
+<link rel="stylesheet" href="../css/style.css">
+<style>
+  .mines-grid {
+    display: grid;
+    gap: 3px;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+  }
+  .mine-cell {
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 11px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    background: #251b35;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  .mine-cell:hover:not(.revealed):not(.flagged) {
+    background: #312447;
+    border-color: rgba(94, 234, 212, 0.4);
+  }
+  .mine-cell:active:not(.revealed) {
+    transform: translateY(1px);
+    box-shadow: none;
+  }
+  .mine-cell.revealed {
+    background: #140d1f;
+    border-color: rgba(255, 255, 255, 0.04);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+    cursor: default;
+  }
+  .mine-cell.mine-exploded {
+    background: #ff6f9c !important;
+    animation: bombShake 0.4s ease;
+  }
+  .mine-cell.flagged {
+    color: #ffb84d;
+  }
+
+  /* Number colors */
+  .num-1 { color: #5eead4; } /* Cyan/Teal */
+  .num-2 { color: #4ade80; } /* Green */
+  .num-3 { color: #ff6f9c; } /* Pink */
+  .num-4 { color: #a78bfa; } /* Violet */
+  .num-5 { color: #ffb84d; } /* Gold */
+  .num-6 { color: #f87171; } /* Red */
+  .num-7 { color: #38bdf8; } /* Light Blue */
+  .num-8 { color: #ffffff; } /* White */
+
+  @keyframes bombShake {
+    0%, 100% { transform: translate(0, 0); }
+    20% { transform: translate(-3px, 2px); }
+    40% { transform: translate(3px, -2px); }
+    60% { transform: translate(-2px, -1px); }
+    80% { transform: translate(2px, 1px); }
+  }
+</style>
+</head>
+
+<body class="bg-arcade-bg text-arcade-text font-body min-h-screen antialiased">
+
+  <div class="scanlines"></div>
+
+  <main class="relative z-10 max-w-lg mx-auto px-4 py-8 sm:py-12">
+
+    <!-- ===== Nav ===== -->
+    <div class="flex items-center justify-between mb-6">
+      <a href="../index.html"
+         class="inline-flex items-center gap-2 font-mono text-xs text-arcade-muted hover:text-arcade-gold transition-colors">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+        KEMBALI
+      </a>
+      <div class="flex items-center gap-3">
+        <button type="button" id="sound-toggle-btn" class="text-arcade-muted hover:text-arcade-teal transition-colors" title="Suara On/Off">
+          <i data-lucide="volume-2" id="sound-icon" class="w-4 h-4"></i>
+        </button>
+        <span class="font-mono text-xs text-arcade-teal" data-score="minesweeper">HI: --</span>
+      </div>
+    </div>
+
+    <!-- ===== Title ===== -->
+    <header class="text-center mb-6">
+      <p class="font-mono text-xs text-arcade-muted mb-2">CABINET 14</p>
+      <h1 class="font-pixel text-lg sm:text-2xl text-arcade-gold drop-shadow-[0_0_16px_rgba(255,184,77,0.3)]">
+        MINESWEEPER
+      </h1>
+      <p class="font-mono text-[11px] sm:text-xs text-arcade-muted mt-2 max-w-xs mx-auto">
+        Klik kiri untuk gali, klik kanan untuk pasang bendera 🚩. Waktu tercepat = Skor terbaik!
+      </p>
+    </header>
+
+    <!-- ===== Difficulty Selector ===== -->
+    <div class="flex items-center justify-center gap-2 mb-5">
+      <button type="button" data-diff="easy"
+              class="diff-btn px-3 py-1.5 rounded-lg font-mono text-xs transition-colors bg-arcade-teal text-arcade-bg font-semibold">
+        Mudah (8×8)
+      </button>
+      <button type="button" data-diff="medium"
+              class="diff-btn px-3 py-1.5 rounded-lg font-mono text-xs transition-colors bg-arcade-alt text-arcade-muted hover:text-arcade-gold border border-white/5">
+        Menengah (12×12)
+      </button>
+      <button type="button" data-diff="hard"
+              class="diff-btn px-3 py-1.5 rounded-lg font-mono text-xs transition-colors bg-arcade-alt text-arcade-muted hover:text-arcade-gold border border-white/5">
+        Ahli (16×16)
+      </button>
+    </div>
+
+    <!-- ===== Stats & Face Reset ===== -->
+    <section aria-label="Statistik" class="grid grid-cols-3 gap-3 mb-5 items-center">
+      <div class="cabinet rounded-xl p-3 text-center">
+        <p class="font-mono text-lg sm:text-xl text-arcade-pink" id="mines-count">10</p>
+        <p class="font-mono text-[10px] text-arcade-muted mt-1">RANJAU</p>
+      </div>
+      <div class="cabinet rounded-xl p-2.5 text-center flex flex-col items-center justify-center">
+        <button type="button" id="face-btn" class="text-2xl sm:text-3xl transition-transform active:scale-90 leading-none" title="Mulai Ulang">
+          🙂
+        </button>
+        <p class="font-mono text-[9px] text-arcade-muted mt-1">RESTART</p>
+      </div>
+      <div class="cabinet rounded-xl p-3 text-center">
+        <p class="font-mono text-lg sm:text-xl text-arcade-gold" id="timer-val">000</p>
+        <p class="font-mono text-[10px] text-arcade-muted mt-1">WAKTU (S)</p>
+      </div>
+    </section>
+
+    <!-- ===== Board Card ===== -->
+    <div class="cabinet rounded-2xl p-3 sm:p-4 mb-4">
+      <!-- Mobile Tool Mode Bar -->
+      <div class="flex sm:hidden items-center justify-center gap-3 mb-3 pb-3 border-b border-white/10">
+        <button type="button" id="mode-dig-btn"
+                class="flex-1 py-2 px-3 rounded-lg font-mono text-xs font-semibold flex items-center justify-center gap-1.5 bg-arcade-teal text-arcade-bg transition-all">
+          <i data-lucide="pickaxe" class="w-3.5 h-3.5"></i> Mode Gali
+        </button>
+        <button type="button" id="mode-flag-btn"
+                class="flex-1 py-2 px-3 rounded-lg font-mono text-xs font-semibold flex items-center justify-center gap-1.5 bg-arcade-alt text-arcade-muted hover:text-arcade-gold border border-white/10 transition-all">
+          <i data-lucide="flag" class="w-3.5 h-3.5"></i> Mode Bendera
+        </button>
+      </div>
+
+      <div class="relative rounded-xl overflow-x-auto p-1.5 sm:p-2 bg-[#0d0814] border border-white/5 flex items-center justify-center">
+        <div id="board-grid" class="mines-grid max-w-full"></div>
+
+        <!-- Victory Overlay -->
+        <div id="win-overlay" class="board-overlay hidden">
+          <span class="text-4xl" aria-hidden="true">🏆</span>
+          <p class="font-pixel text-sm text-arcade-gold">BERSIH DARI RANJAU!</p>
+          <p id="win-summary" class="font-mono text-[11px] text-arcade-muted px-4 text-center"></p>
+          <button type="button" id="win-restart-btn"
+                  class="rounded-lg bg-arcade-teal/90 hover:bg-arcade-teal text-arcade-bg font-mono text-xs font-semibold px-5 py-2.5 mt-2 transition-colors">
+            MAIN LAGI
+          </button>
+        </div>
+
+        <!-- Game Over Overlay -->
+        <div id="gameover-overlay" class="board-overlay hidden">
+          <span class="text-4xl" aria-hidden="true">💥</span>
+          <p class="font-pixel text-sm text-arcade-pink">BOOM! GAME OVER</p>
+          <p class="font-mono text-[11px] text-arcade-muted px-4 text-center">Kamu menyentuh ranjau aktif.</p>
+          <button type="button" id="gameover-restart-btn"
+                  class="rounded-lg bg-arcade-teal/90 hover:bg-arcade-teal text-arcade-bg font-mono text-xs font-semibold px-5 py-2.5 mt-2 transition-colors">
+            COBA LAGI
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick instructions -->
+    <div class="text-center font-mono text-[10px] text-arcade-muted space-y-1">
+      <p>💡 <b>First-Click Safe:</b> Klik pertama selalu bebas ranjau & posisi diacak ulang tiap ronde.</p>
+      <p>💡 <b>Quick Chord:</b> Klik petak angka yang sudah cukup benderanya untuk buka petak sekitar.</p>
+    </div>
+
+  </main>
+
+  <script src="../js/shared.js"></script>
+  <script src="../js/minesweeper.js"></script>
+</body>
+</html>
